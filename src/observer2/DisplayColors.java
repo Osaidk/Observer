@@ -1,4 +1,4 @@
-package observer1;
+package observer2;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -63,13 +63,13 @@ public class DisplayColors implements ChangeListener {
             valueLabel = new JLabel();
             valueLabel.setFont(SwingFacade.getStandardFont());
             valueLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-            valueLabel.setForeground(java.awt.Color.black);
+            valueLabel.setForeground(Color.black);
         }
         Box b = Box.createHorizontalBox();
         JLabel label = new JLabel(sliderLabel);
         label.setFont(SwingFacade.getStandardFont());
         label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-        label.setForeground(java.awt.Color.black);
+        label.setForeground(Color.black);
         b.add(label);
         b.add(valueLabel);
         b.add(slider);
