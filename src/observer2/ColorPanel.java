@@ -3,7 +3,7 @@ package observer2;
 import javax.swing.*;
 import java.awt.*;
 
-public class ColorPanel extends JPanel {
+public abstract class ColorPanel extends JPanel implements Observer {
     private Color color;
 
     public ColorPanel(Color initialColor) {
@@ -19,4 +19,5 @@ public class ColorPanel extends JPanel {
         this.setBackground(color);
         super.paintComponent(g);
     }
+
 }
