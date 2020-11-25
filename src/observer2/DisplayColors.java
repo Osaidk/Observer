@@ -110,9 +110,7 @@ public class DisplayColors implements ChangeListener, ObserverRegistry {
     }
 
     @Override
-    public void DeleteObserver(Observer observer) {
-        ObserverList.remove(observer);
-    }
+    public void DeleteObserver(Observer observer) { ObserverList.remove(observer); }
 
     @Override
     public void UpdateObserver() {
