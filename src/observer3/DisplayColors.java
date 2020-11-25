@@ -31,7 +31,7 @@ public class DisplayColors implements ChangeListener, ObserverRegistry {
         p.add(SwingFacade.createTitledPanel("Original Color", originalColorPanel));
         complementaryColorPanel = createComplementaryColorPanel(Color.getHSBColor((float) .5, (float) .5, (float) .5));
         p.add(SwingFacade.createTitledPanel("Complementary Color", complementaryColorPanel));
-        registerObservers(originalColorPanel, complementaryColorPanel);
+        registerObservers((OriginalColorPanel) originalColorPanel);
         return p;
     }
 
@@ -87,21 +87,20 @@ public class DisplayColors implements ChangeListener, ObserverRegistry {
     }
 
     protected ColorPanel createComplementaryColorPanel(Color initialColor) {
-        ColorPanel Complement = new ComplementaryColorPanel(initialColor);
+        ColorPanel Complement = new ComplementaryColorPanel(initialColor, (OriginalColorPanel) originalColorPanel);
         Complement.setPreferredSize(new Dimension(300, 200));
         return Complement;
     }
 
 
-    public void stateChanged(ChangeEvent e) {
+    public void stateChanged(ChangeEvent event) {
         if (hueSlider != null && saturationSlider != null && brightnessSlider != null) {
             UpdateObserver();
         }
     }
 
-    public void registerObservers (Observer Original, Observer Complement) {
+    public void registerObservers (Observer Original) {
         addObserver(Original);
-        addObserver(Complement);
     }
 
     @Override

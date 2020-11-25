@@ -1,14 +1,19 @@
 package observer3;
 
-import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class ComplementaryColorPanel extends ColorPanel {
+public class ComplementaryColorPanel extends ColorPanel implements PropertyChangeListener {
     private Color color;
+    private OriginalColorPanel originalPanel;
 
-    public ComplementaryColorPanel(Color color) {
+
+    public ComplementaryColorPanel(Color color, OriginalColorPanel original) {
         super(color);
         this.color = color;
+        this.originalPanel = original;
+        originalPanel.addPropertyChangeListener(this);
     }
 
     public void setColor(Color newColor) {
@@ -20,16 +25,20 @@ public class ComplementaryColorPanel extends ColorPanel {
         super.paintComponent(g);
     }
 
+
+    public void setAttributes (float Hue, float Sat, float Bri) {
+        Color newColor = Color.getHSBColor(Hue, Sat, Bri);
+        this.setColor(newColor);
+    }
+
     @Override
-    public void PushUpdate(JSlider hueSlider, JSlider saturationSlider, JSlider brightnessSlider) {
-        float newHue = (float) hueSlider.getValue() / 100;
-        float newSaturation = (float) saturationSlider.getValue() / 100;
-        float newBrightness = (float) brightnessSlider.getValue() / 100;
-        float complementaryHue = newHue - (float) 0.5;
+    public void propertyChange(PropertyChangeEvent evt) {
+        //System.out.println("hello");
+        float Hue = originalPanel.getHue();
+        float complementaryHue = Hue - (float) 0.5;
         if (complementaryHue < 0) {
             complementaryHue = complementaryHue + 1;
         }
-        Color newColor = Color.getHSBColor(complementaryHue, newSaturation, newBrightness);
-        this.setColor(newColor);
+        setAttributes(complementaryHue, originalPanel.getSat(), originalPanel.getBri());
     }
 }

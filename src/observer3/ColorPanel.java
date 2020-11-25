@@ -3,7 +3,7 @@ package observer3;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class ColorPanel extends JPanel implements Observer {
+public abstract class ColorPanel extends JPanel {
     private Color color;
 
     public ColorPanel(Color initialColor) {
