@@ -1,11 +1,12 @@
-package observer1;
+package observer3;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.util.ArrayList;
 
-public class DisplayColors implements ChangeListener {
+public class DisplayColors implements ChangeListener, ObserverRegistry {
 
     public static void main(String[] args) {
         SwingFacade.launch(new DisplayColors().mainPanel(), "Compute Complementary Colors");
@@ -21,14 +22,16 @@ public class DisplayColors implements ChangeListener {
     protected JLabel hueValueLabel;
     protected JLabel saturationValueLabel;
     protected JLabel brightnessValueLabel;
+    private ArrayList<Observer> ObserverList = new ArrayList<>();
 
     protected JPanel colorsPanel() {
         JPanel p = new JPanel();
         p.setLayout(new GridLayout(1, 2));
-        originalColorPanel = createColorPanel(Color.getHSBColor(0, (float) .5, (float) .5));
+        originalColorPanel = createOriginalColorPanel(Color.getHSBColor(0, (float) .5, (float) .5));
         p.add(SwingFacade.createTitledPanel("Original Color", originalColorPanel));
-        complementaryColorPanel = createColorPanel(Color.getHSBColor((float) .5, (float) .5, (float) .5));
+        complementaryColorPanel = createComplementaryColorPanel(Color.getHSBColor((float) .5, (float) .5, (float) .5));
         p.add(SwingFacade.createTitledPanel("Complementary Color", complementaryColorPanel));
+        registerObservers(originalColorPanel, complementaryColorPanel);
         return p;
     }
 
@@ -53,7 +56,7 @@ public class DisplayColors implements ChangeListener {
 
     private JSlider slider() {
         JSlider slider = new JSlider();
-        slider.addChangeListener(this::stateChanged); // Change listener to the slider is added
+        slider.addChangeListener(this); // Change listener to the slider is added
         slider.setValue(slider.getMinimum());
         return slider;
     }
@@ -63,13 +66,13 @@ public class DisplayColors implements ChangeListener {
             valueLabel = new JLabel();
             valueLabel.setFont(SwingFacade.getStandardFont());
             valueLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-            valueLabel.setForeground(java.awt.Color.black);
+            valueLabel.setForeground(Color.black);
         }
         Box b = Box.createHorizontalBox();
         JLabel label = new JLabel(sliderLabel);
         label.setFont(SwingFacade.getStandardFont());
         label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-        label.setForeground(java.awt.Color.black);
+        label.setForeground(Color.black);
         b.add(label);
         b.add(valueLabel);
         b.add(slider);
@@ -77,27 +80,46 @@ public class DisplayColors implements ChangeListener {
         return b;
     }
 
-    protected ColorPanel createColorPanel(Color initialColor) {
-        ColorPanel colorPanel = new ColorPanel(initialColor);
-        colorPanel.setPreferredSize(new Dimension(300, 200));
-        return colorPanel;
+    protected ColorPanel createOriginalColorPanel(Color initialColor) {
+        ColorPanel Original = new OriginalColorPanel(initialColor);
+        Original.setPreferredSize(new Dimension(300, 200));
+        return Original;
+    }
+
+    protected ColorPanel createComplementaryColorPanel(Color initialColor) {
+        ColorPanel Complement = new ComplementaryColorPanel(initialColor);
+        Complement.setPreferredSize(new Dimension(300, 200));
+        return Complement;
     }
 
 
     public void stateChanged(ChangeEvent e) {
         if (hueSlider != null && saturationSlider != null && brightnessSlider != null) {
-            float newHue = (float) hueSlider.getValue() / 100;
-            float newSaturation = (float) saturationSlider.getValue() / 100;
-            float newBrightness = (float) brightnessSlider.getValue() / 100;
-            Color newColor = Color.getHSBColor(newHue, newSaturation, newBrightness);
-            float complementaryHue = newHue - (float) 0.5;
-            if (complementaryHue < 0) {
-                complementaryHue = complementaryHue + 1;
-            }
-            Color complementaryColor = Color.getHSBColor(complementaryHue, newSaturation, newBrightness);
-            originalColorPanel.setColor(newColor); // setting the original color panel
-            complementaryColorPanel.setColor(complementaryColor); //  setting the complementary color panel
+            UpdateObserver();
         }
+    }
+
+    public void registerObservers (Observer Original, Observer Complement) {
+        addObserver(Original);
+        addObserver(Complement);
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        ObserverList.add(observer);
+    }
+
+    @Override
+    public void DeleteObserver(Observer observer) {
+        ObserverList.remove(observer);
+    }
+
+    @Override
+    public void UpdateObserver() {
+        for (Observer observer : ObserverList) {
+            observer.PushUpdate(hueSlider, saturationSlider, brightnessSlider);
+        }
+
     }
 }
     
